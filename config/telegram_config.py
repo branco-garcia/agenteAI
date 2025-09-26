@@ -1,0 +1,7 @@
+import os
+
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "8436841267:AAF5oYG_FiKvDNi-vKGh_JjL4X_v3ReQUHo")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "5786912071")
+
+# Configuración de notificaciones
+TELEGRAM_NOTIFICATIONS_ENABLED = os.getenv("TELEGRAM_NOTIFICATIONS_ENABLED", "True").lower() == "true"

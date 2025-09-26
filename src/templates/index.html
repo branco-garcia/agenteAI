@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Chat MAAS</title>
+<style>
+:root {
+    --primary-color: #4a6fa5;
+    --secondary-color: #6b8cbc;
+    --light-color: #f5f7fa;
+    --dark-color: #333;
+    --user-color: #4a6fa5;
+    --bot-color: #4caf50;
+    --border-color: #ddd;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 90%;
+    max-width: 800px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0 0 10px 0;
+    font-size: 2.2rem;
+}
+
+header p {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.models {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 15px;
+    background-color: #f0f4f8;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.model {
+    text-align: center;
+    padding: 10px 15px;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    flex: 1;
+    max-width: 200px;
+}
+
+.model h3 {
+    margin: 0 0 5px 0;
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.model p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.chat-container {
+    padding: 20px;
+}
+
+#chat {
+    height: 400px;
+    overflow-y: auto;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: #fafafa;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 18px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.user-message {
+    background-color: var(--user-color);
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+}
+
+.bot-message {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+}
+
+#mensaje {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#mensaje:focus {
+    border-color: var(--primary-color);
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Estilos para la barra de desplazamiento */
+#chat::-webkit-scrollbar {
+    width: 6px;
+}
+
+#chat::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#chat::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+#chat::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Mensaje inicial del bot */
+.welcome-message {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Chat MAAS</h1>
+        <p>Model as a Service - Chatea con nuestros modelos de IA</p>
+    </header>
+    
+    <div class="models">
+        <div class="model">
+            <h3>Gemini</h3>
+            <p>Modelo avanzado de lenguaje para conversaciones naturales</p>
+        </div>
+        <div class="model">
+            <h3>GPT-4</h3>
+            <p>Modelo de última generación para tareas complejas</p>
+        </div>
+    </div>
+    
+    <div class="chat-container">
+        <div id="chat">
+            <div class="welcome-message">¡Hola! Soy tu asistente MAAS. ¿En qué puedo ayudarte hoy?</div>
+            <!-- Los mensajes del chat se agregarán aquí dinámicamente -->
+        </div>
+        
+        <div class="input-area">
+            <input id="mensaje" type="text" placeholder="Escribe tu mensaje..." />
+            <button onclick="enviar()">Enviar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+async function enviar() {
+    const input = document.getElementById("mensaje");
+    const msg = input.value.trim();
+    
+    if(!msg) return;
+    
+    // Agregar mensaje del usuario al chat
+    const userMessage = document.createElement("div");
+    userMessage.className = "message user-message";
+    userMessage.textContent = msg;
+    document.getElementById("chat").appendChild(userMessage);
+    
+    input.value = "";
+    
+    try {
+        // Simular respuesta del bot (en un caso real, aquí iría la llamada a la API)
+        const res = await fetch("/preguntar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pregunta: msg })
+        });
+        
+        if (!res.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+        
+        const data = await res.json();
+        
+        // Agregar respuesta del bot al chat
+        const botMessage = document.createElement("div");
+        botMessage.className = "message bot-message";
+        botMessage.textContent = data.respuesta;
+        document.getElementById("chat").appendChild(botMessage);
+    } catch (error) {
+        console.error("Error:", error);
+        // En caso de error, mostrar un mensaje predeterminado
+        const errorMessage = document.createElement("div");
+        errorMessage.className = "message bot-message";
+        errorMessage.textContent = "Lo siento, ha ocurrido un error. Por favor, intenta de nuevo más tarde.";
+        document.getElementById("chat").appendChild(errorMessage);
+    }
+    
+    // Desplazar el chat hacia abajo para mostrar el último mensaje
+    document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
+}
+
+// Permitir enviar mensaje con la tecla Enter
+document.getElementById("mensaje").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        enviar();
+    }
+});
+</script>
+</body>
+</html>
