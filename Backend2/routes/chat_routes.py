@@ -8,15 +8,22 @@ def setup_chat_routes(app):
         try:
             data = request.get_json()
             if not data:
-                return jsonify({"respuesta": "❌ No se recibieron datos JSON"}), 400
-                
-            pregunta = data.get("pregunta", "")
+                return jsonify({'respuesta': 'No se recibieron datos JSON'}), 400
+
+            pregunta = data.get("pregunta", '')
             if not pregunta.strip():
-                return jsonify({"respuesta": "Por favor, ingresa una pregunta."}), 400
-            
+                return jsonify({'respuesta': 'Por favor, ingresa una pregunta.'}), 400
+
+            print(f"Pregunta recibida: {pregunta}")
+
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             respuesta = loop.run_until_complete(responder_pregunta(pregunta))
-            return jsonify({"respuesta": respuesta})
+            print(f"Respuesta generada: {respuesta}")
+            return jsonify({'respuesta': respuesta})
+
         except Exception as e:
-            return jsonify({"respuesta": f"❌ Error procesando la pregunta: {e}"}), 500
+            print(f"Error en endpoint /preguntar: {e}")
+            import traceback
+            traceback.print_exc()
+            return jsonify({'respuesta': f'Error procesando la pregunta: {str(e)}'}), 500
